@@ -1,21 +1,21 @@
 #!/usr/bin/python
 '''
-mirage v0.1 - Copyright 2013 James Slaughter,
-This file is part of mirage v0.1.
+mirage v0.2 - Copyright 2014 James Slaughter,
+This file is part of mirage v0.2.
 
-mirage v0.1 is free software: you can redistribute it and/or modify
+mirage v0.2 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 
-mirage v0.1 is distributed in the hope that it will be useful,
+mirage v0.2 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mirage v0.1.  If not, see <http://www.gnu.org/licenses/>.
+along with mirage v0.2.  If not, see <http://www.gnu.org/licenses/>.
  
 '''
 
@@ -44,8 +44,9 @@ Function: Display the usage parameters when called
 def Usage():
     print 'Usage: [required] --target [optional] --supresswget --supressnmap --supresscert --debug --help'
     print 'Required Arguments:'
-    print '--target[Must be IP to work properly] - the host you are investigating.'
+    print '--target[can be domain(without http://) or IP] - the host you are investigating.'
     print 'Optional Arguments:'
+    print '--url - the full address of the resource you are investigating.'
     print '--supresswget - will not attempt a WGET against the target.'
     print '--supressnmap - will not perform a port scan against the target.  Will automatically' 
     print 'suspend --supresswget and --supresscert as well.'
@@ -162,35 +163,72 @@ def Cert(target, logdir):
 WGet()
 Function: Execute a WGet against the provided target
 '''
-def WGet(target, logdir):
+def WGet(target, logdir, url):
 
-    for port in LG.http_data:
-        if (AP.debug == True):
-             print 'Port: ' + str(port) + '\n'
-     
-        filename = logdir + 'index_port' + str(port) + '.html'
-
-        if (AP.debug == True):
-            print 'WGet: target: ' + target + ' port ' + str(port)
-
+    if (url != ''):
         #WGet flags: --tries=1 Limit tries to a host connection to 1.
         #            -S Show the original server headers.
         #            --no-check-certificate Will not balk when a site's certificate doesn't match the target domain.
         #            --save-headers Save the server headers for investigation.
-        #            -O output to given filename.
+        #            -m mirror the contents of the URL given
+        #            --no-parent does not download the contents of the entire domain and sub-domains
+        #            --directory-prefix output to given directory.    
+        if (AP.debug == True):
+            print 'wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url
 
-        subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        for wget_data in subproc.stdout.readlines():
-            AP.wget_output_data += wget_data
+        subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url, shell=True, stdout=subpro$
+        for wget_url_data in subproc.stdout.readlines():
+            AP.wget_url_output_data += wget_url_data
             if (AP.debug == True):
-                print wget_data
+                print wget_url_data
+
+
+    for port in LG.http_data:
+        if (AP.debug == True):
+             print 'Port: ' + str(port) + '\n'
+
+        filename = logdir + 'index_port' + str(port) + '.html'
+        log = logdir + 'index_port' + str(port) + '.log'
+
+        if (AP.useragent.find('default') != -1 ):
+            if (AP.debug == True):
+                print 'wget --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port)
+
+            #WGet flags: --tries=1 Limit tries to a host connection to 1.
+            #            -S Show the original server headers.
+            #            --no-check-certificate Will not balk when a site's certificate doesn't match the target domain.
+            #            --save-headers Save the server headers for investigation.
+            #            -O output to given filename.
+
+            subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            for wget_data in subproc.stdout.readlines():
+                AP.wget_output_data += wget_data
+                if (AP.debug == True):
+                    print wget_data
+
+        else:
+            if (AP.debug == True):
+                print 'wget --user-agent=' + AP.useragent + ' --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port)
+
+            #WGet flags: --tries=1 Limit tries to a host connection to 1.
+            #            -S Show the original server headers.
+            #            --user-agent Will identify as a browser agent and not WGet
+            #            --no-check-certificate Will not balk when a site's certificate doesn't match the target domain.
+            #            --save-headers Save the server headers for investigation.
+            #            -O output to given filename.
+
+            subproc = subprocess.Popen('wget --user-agent=' + AP.useragent + ' --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            for wget_data in subproc.stdout.readlines():
+                AP.wget_output_data += wget_data
+                if (AP.debug == True):
+                    print wget_data
+
 
         LG.HTMLRead(filename, AP.debug)
 
         LinkParser(port, logdir)
 
         filename = ''    
-
 '''
 Terminate()
 Function: - Attempts to exit the program cleanly when called  
@@ -246,7 +284,7 @@ if __name__ == '__main__':
                     if (AP.debug == True):
                         print 'Certificate data collection supressed this run.'
                 if (AP.supresswget == False):
-                    WGet(AP.target, logdir)
+                    WGet(AP.target, logdir, AP.url)
                 else:
                     if (AP.debug == True):
                         print 'WGet Collection supressed this run.'

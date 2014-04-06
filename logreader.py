@@ -1,20 +1,20 @@
 '''
-mirage v0.1 - Copyright 2013 James Slaughter,
-This file is part of mirage v0.1.
+mirage v0.2 - Copyright 2014 James Slaughter,
+This file is part of mirage v0.2.
 
-mirage v0.1 is free software: you can redistribute it and/or modify
+mirage v0.2 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 
-mirage v0.1 is distributed in the hope that it will be useful,
+mirage v0.2 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mirage v0.1.  If not, see <http://www.gnu.org/licenses/>.
+along with mirage v0.2.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 
@@ -24,7 +24,7 @@ the /var/log/auth.log file
 '''
 
 
-#No python imports
+#Python imports
 from array import *
 
 #Programmer generated imports
@@ -48,6 +48,7 @@ class logreader:
         self.http_data = array('i')
         self.https_data = array('i')
         self.html_reader_data = ''
+        self.useragent = ''
 
     '''
     ConfRead()
@@ -63,6 +64,8 @@ class logreader:
             intLen = len(line)
             if (line.find('logdir') != -1):                
                 self.logdir = line[7:intLen]
+            elif (line.find('useragent') != -1):
+                self.useragent = line[10:intLen]
             else:
                 if (debug == True): 
                     print ''

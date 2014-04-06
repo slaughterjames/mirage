@@ -1,20 +1,20 @@
 '''
-mirage v0.1 - Copyright 2013 James Slaughter,
-This file is part of mirage v0.1.
+mirage v0.2 - Copyright 2014 James Slaughter,
+This file is part of mirage v0.2.
 
-mirage v0.1 is free software: you can redistribute it and/or modify
+mirage v0.2 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 
-mirage v0.1 is distributed in the hope that it will be useful,
+mirage v0.2 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mirage v0.1.  If not, see <http://www.gnu.org/licenses/>.
+along with mirage v0.2.  If not, see <http://www.gnu.org/licenses/>.
 ''' 
 
 '''
@@ -39,6 +39,7 @@ class argparser:
     def __init__(self):
 
         self.target = ''
+        self.url = ''
         self.supresswget = False
         self.supresscert = False
         self.supressnmap = False
@@ -47,7 +48,9 @@ class argparser:
         self.nmap_filename = ''
         self.nmap_output_data = ''
         self.wget_output_data = ''
+        self.wget_url_output_data = ''
         self.cert_output_data = ''
+        self.useragent = ''
         self.debug = False
         
         
@@ -75,6 +78,10 @@ class argparser:
                 if option == 'target':
                     self.target = args[i+1] 
                     print option + ': ' + self.target
+
+                if option == 'url':
+                    self.url = args[i+1]
+                    print option + ': ' + self.url
 
                 if option == 'supresswget':
                     self.supresswget = True
