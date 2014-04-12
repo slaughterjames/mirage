@@ -176,7 +176,7 @@ def WGet(target, logdir, url):
         if (AP.debug == True):
             print 'wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url
 
-        subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url, shell=True, stdout=subpro$
+        subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         for wget_url_data in subproc.stdout.readlines():
             AP.wget_url_output_data += wget_url_data
             if (AP.debug == True):
