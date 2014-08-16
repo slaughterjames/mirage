@@ -1,21 +1,21 @@
 #!/usr/bin/python
 '''
-mirage v0.2 - Copyright 2014 James Slaughter,
-This file is part of mirage v0.2.
+mirage v0.3 - Copyright 2014 James Slaughter,
+This file is part of mirage v0.3.
 
-mirage v0.2 is free software: you can redistribute it and/or modify
+mirage v0.3 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 
-mirage v0.2 is distributed in the hope that it will be useful,
+mirage v0.3 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mirage v0.2.  If not, see <http://www.gnu.org/licenses/>.
+along with mirage v0.3.  If not, see <http://www.gnu.org/licenses/>.
  
 '''
 
@@ -29,7 +29,10 @@ import sys
 import os
 import subprocess
 import re
+import json
+import simplejson
 import urllib
+import urllib2
 from array import *
 
 #programmer generated imports
@@ -44,9 +47,11 @@ Function: Display the usage parameters when called
 def Usage():
     print 'Usage: [required] --target [optional] --supresswget --supressnmap --supresscert --debug --help'
     print 'Required Arguments:'
-    print '--target[can be domain(without http://) or IP] - the host you are investigating.'
+    print '--ip - the IP address of the resource you are investigating'
+    print 'OR'
+    print '--domain (without http://) - the domain of the resournce you are investigating'
     print 'Optional Arguments:'
-    print '--url - the full address of the resource you are investigating.'
+    print '--url - the full address of the resource you are investigating to allow WGet to mirror' 
     print '--supresswget - will not attempt a WGET against the target.'
     print '--supressnmap - will not perform a port scan against the target.  Will automatically' 
     print 'suspend --supresswget and --supresscert as well.'
@@ -80,9 +85,8 @@ def Whois(target, logdir):
         AP.whois_output_data += whois_data
         if  (AP.debug == True):
             print whois_data
-
+   
     FI.WriteFile(filename, AP.whois_output_data)
-
 
 '''
 NMap()
@@ -165,18 +169,17 @@ Function: Execute a WGet against the provided target
 '''
 def WGet(target, logdir, url):
 
-    if (url != ''):
+    if (len(url) > 5):
         #WGet flags: --tries=1 Limit tries to a host connection to 1.
-        #            -S Show the original server headers.
         #            --no-check-certificate Will not balk when a site's certificate doesn't match the target domain.
-        #            --save-headers Save the server headers for investigation.
         #            -m mirror the contents of the URL given
         #            --no-parent does not download the contents of the entire domain and sub-domains
         #            --directory-prefix output to given directory.    
         if (AP.debug == True):
-            print 'wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url
+            print 'wget --tries=1 --no-check-certificate -m --no-parent --directory-prefix ' + logdir + ' ' + url
 
-        subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -m --no-parent --directory-prefix ' + logdir + ' ' + url, shell=True, stdout=subpro$
+        subproc = subprocess.Popen('wget --tries=1 --no-check-certificate -m --no-parent --directory-prefix ' + logdir + ' ' + url, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
         for wget_url_data in subproc.stdout.readlines():
             AP.wget_url_output_data += wget_url_data
             if (AP.debug == True):
@@ -192,15 +195,13 @@ def WGet(target, logdir, url):
 
         if (AP.useragent.find('default') != -1 ):
             if (AP.debug == True):
-                print 'wget --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port)
+                print 'wget --tries=1 --no-check-certificate -O ' + filename + ' ' + target + ':' + str(port)
 
             #WGet flags: --tries=1 Limit tries to a host connection to 1.
-            #            -S Show the original server headers.
             #            --no-check-certificate Will not balk when a site's certificate doesn't match the target domain.
-            #            --save-headers Save the server headers for investigation.
             #            -O output to given filename.
 
-            subproc = subprocess.Popen('wget --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            subproc = subprocess.Popen('wget --tries=1 --no-check-certificate -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             for wget_data in subproc.stdout.readlines():
                 AP.wget_output_data += wget_data
                 if (AP.debug == True):
@@ -208,16 +209,14 @@ def WGet(target, logdir, url):
 
         else:
             if (AP.debug == True):
-                print 'wget --user-agent=' + AP.useragent + ' --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port)
+                print 'wget --user-agent=' + AP.useragent + ' --tries=1 --no-check-certificate -O ' + filename + ' ' + target + ':' + str(port)
 
             #WGet flags: --tries=1 Limit tries to a host connection to 1.
-            #            -S Show the original server headers.
             #            --user-agent Will identify as a browser agent and not WGet
             #            --no-check-certificate Will not balk when a site's certificate doesn't match the target domain.
-            #            --save-headers Save the server headers for investigation.
             #            -O output to given filename.
 
-            subproc = subprocess.Popen('wget --user-agent=' + AP.useragent + ' --tries=1 -S --no-check-certificate --save-headers -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            subproc = subprocess.Popen('wget --user-agent=' + AP.useragent + ' --tries=1 --no-check-certificate -O ' + filename + ' ' + target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             for wget_data in subproc.stdout.readlines():
                 AP.wget_output_data += wget_data
                 if (AP.debug == True):
@@ -229,6 +228,52 @@ def WGet(target, logdir, url):
         LinkParser(port, logdir)
 
         filename = ''    
+
+'''
+GetDomainReputation(apikey, logdir)
+Function: - Get the reputation of an input URL
+'''
+def GetDomainReputation(apikey, logdir):
+
+    FI = fileio()
+    filename = logdir + 'DomainReputation.txt'
+
+    vt = "http://www.virustotal.com/vtapi/v2/domain/report"
+    parameters = {"domain": AP.domain, "apikey": apikey.rstrip('\n')}
+    response = urllib.urlopen('%s?%s' % (vt, urllib.urlencode(parameters))).read()
+    response_dict = json.loads(response)
+    response_dump = json.dumps(json.JSONDecoder().decode(response), sort_keys=True, indent = 4)
+
+    FI.WriteFile(filename, response_dump)
+
+    if (AP.debug == True):
+        print response_dict
+
+    return 0
+
+'''
+GetIPReputation(apikey, logdir)
+Function: - Get the reputation of an input IP Address
+'''
+def GetIPReputation(apikey, logdir):
+
+    FI = fileio()
+    filename = logdir + 'IPReputation.txt'
+
+    vt = "http://www.virustotal.com/vtapi/v2/ip-address/report"
+    parameters = {"ip": AP.ip, "apikey": apikey.rstrip('\n')}
+    response = urllib.urlopen('%s?%s' % (vt, urllib.urlencode(parameters))).read()
+    response_dict = json.loads(response)
+    response_dump = json.dumps(json.JSONDecoder().decode(response), sort_keys=True, indent=4)
+
+    FI.WriteFile(filename, response_dump)
+
+    if (AP.debug == True):
+        print response_dict
+
+    return 0
+
+
 '''
 Terminate()
 Function: - Attempts to exit the program cleanly when called  
@@ -267,27 +312,61 @@ if __name__ == '__main__':
             Terminate(-1)
         else:
             AP.logdir = LG.logdir.rstrip('\n')
+        
+        if (len(AP.ip) > 5):            
+            logdir = AP.logdir + AP.ip + '/'
+            if (AP.debug == True):
+                print 'logdir: ' + AP.logdir + AP.target
+                print ''
+        elif (len(AP.domain) > 5):
+            logdir = AP.logdir + AP.domain + '/'
+            if (AP.debug == True):
+                print 'logdir: ' + AP.logdir + AP.target
+                print ''
+        else:
+            print 'The log directory has not been created due to a missing IP or domain argument.'
+            print ''
+            Terminate(-1)        
                     
-        logdir = AP.logdir + AP.target + '/'
-        if (AP.debug == True):
-            print 'logdir: ' + AP.logdir + AP.target
-            print ''            
         if not os.path.exists(logdir):
             os.makedirs(logdir)
-            Whois(AP.target, logdir)
             if (AP.supressnmap == False):
-                NMap(AP.target, logdir)
-                NMapLogProcess()
-                if (AP.supresscert == False):
-                    Cert(AP.target, logdir)
-                else:
-                    if (AP.debug == True):
-                        print 'Certificate data collection supressed this run.'
-                if (AP.supresswget == False):
-                    WGet(AP.target, logdir, AP.url)
-                else:
-                    if (AP.debug == True):
-                        print 'WGet Collection supressed this run.'
+                if (len(AP.ip) > 5):
+                    Whois(AP.ip, logdir)
+                    NMap(AP.ip, logdir)
+                    NMapLogProcess()
+                    if (AP.supresscert == False):
+                        Cert(AP.ip, logdir)
+                    else:
+                        if (AP.debug == True):
+                            print 'Certificate data collection supressed this run.'
+                    if (AP.supresswget == False):
+                        WGet(AP.ip, logdir, AP.url)
+                    else:
+                        if (AP.debug == True):
+                            print 'WGet Collection supressed this run.'
+                    if (LG.apikey != 'Default'):
+                        GetIPReputation(LG.apikey, logdir)
+                    else:
+                        print 'VirusTotal API key not set, supressing reputation retrival.'
+                elif (len(AP.domain) > 5):
+                    Whois(AP.domain, logdir)
+                    NMap(AP.domain, logdir)
+                    NMapLogProcess()
+                    if (AP.supresscert == False):
+                        Cert(AP.domain, logdir)
+                    else:
+                        if (AP.debug == True):
+                            print 'Certificate data collection supressed this run.'
+                    if (AP.supresswget == False):
+                        WGet(AP.domain, logdir, AP.url)
+                    else:
+                        if (AP.debug == True):
+                            print 'WGet Collection supressed this run.'
+                    if (LG.apikey != 'Default'):
+                        GetDomainReputation(LG.apikey, logdir)
+                    else:
+                        print 'VirusTotal API key not set, supressing reputation retrival.'
             else:
                 if (AP.debug == True):
                     print 'NMap collection supressed this run.  Certificate data collection and WGet collection are dependant on NMap and will therefore be supressed as well.'

@@ -1,20 +1,20 @@
 '''
-mirage v0.2 - Copyright 2014 James Slaughter,
-This file is part of mirage v0.2.
+mirage v0.3 - Copyright 2014 James Slaughter,
+This file is part of mirage v0.3.
 
-mirage v0.2 is free software: you can redistribute it and/or modify
+mirage v0.3 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 
-mirage v0.2 is distributed in the hope that it will be useful,
+mirage v0.3 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mirage v0.2.  If not, see <http://www.gnu.org/licenses/>.
+along with mirage v0.3.  If not, see <http://www.gnu.org/licenses/>.
 ''' 
 
 '''
@@ -38,8 +38,10 @@ class argparser:
     '''
     def __init__(self):
 
-        self.target = ''
+        self.domain = ''
         self.url = ''
+        self.ip = ''
+        self.target = ''
         self.supresswget = False
         self.supresscert = False
         self.supressnmap = False
@@ -75,13 +77,17 @@ class argparser:
                 if option == 'help':
                     return -1
 
-                if option == 'target':
-                    self.target = args[i+1] 
-                    print option + ': ' + self.target
+                if option == 'domain':
+                    self.domain = args[i+1] 
+                    print option + ': ' + self.domain
+
+                if option == 'ip':
+                    self.ip = args[i+1]
+                    print option + ': ' + self.ip
 
                 if option == 'url':
                     self.url = args[i+1]
-                    print option + ': ' + self.url
+                    print option + ': ' + self.url              
 
                 if option == 'supresswget':
                     self.supresswget = True
@@ -101,8 +107,8 @@ class argparser:
 
         print ''                    
        
-        if len(self.target) < 7:
-            print 'target is a required argument'
+        if (len(self.ip) > 5 and len(self.domain) > 5):
+            print 'domain and ip cannot be used together as arguments.'
             print ''
             return -1
                                 
