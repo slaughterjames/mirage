@@ -20,7 +20,7 @@ along with mirage v0.3.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 logreader.py - This file is responsible for providing a mechanism to read 
-the /var/log/auth.log file 
+log files
 '''
 
 
