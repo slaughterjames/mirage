@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with mirage v0.3.  If not, see <http://www.gnu.org/licenses/>.
 
-Usage: [required] --ip [OR] --domain [optional] --supresswget --supressnmap --supresscert --debug --help
+Usage: [required] --ip [OR] --domain [optional] --url --supresswget --supressnmap --supresscert --debug --help
     Required Arguments:
     --ip - the IP address of the resource you are investigating
     OR
