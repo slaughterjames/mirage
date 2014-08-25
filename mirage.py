@@ -45,7 +45,7 @@ Usage()
 Function: Display the usage parameters when called
 '''
 def Usage():
-    print 'Usage: [required] --target [optional] --supresswget --supressnmap --supresscert --debug --help'
+    print 'Usage: [required] --ip [OR] --domain [optional] --url --supresswget --supressnmap --supresscert --debug --help'
     print 'Required Arguments:'
     print '--ip - the IP address of the resource you are investigating'
     print 'OR'
