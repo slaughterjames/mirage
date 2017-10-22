@@ -1,20 +1,20 @@
 #!/usr/bin/python
 '''
-Mirage v0.4 - Copyright 2017 James Slaughter,
-This file is part of Mirage v0.4.
+Mirage v0.5 - Copyright 2017 James Slaughter,
+This file is part of Mirage v0.5.
 
-Mirage v0.4 is free software: you can redistribute it and/or modify
+Mirage v0.5 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Mirage v0.4 is distributed in the hope that it will be useful,
+Mirage v0.5 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mirage v0.4.  If not, see <http://www.gnu.org/licenses/>.
+along with Mirage v0.5.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 '''
@@ -46,7 +46,7 @@ Usage()
 Function: Display the usage parameters when called
 '''
 def Usage():
-    print 'Usage: [required] [--ip|--domain|--url] [--target|--targetlist] --type --modules [optional] --url --output --listmodules -updatefeeds --debug --help'
+    print 'Usage: [required] [--ip|--domain|--url] [--target|--targetlist] --type --modules [optional] --sleeptime --url --output --listmodules -updatefeeds --debug --help'
     print 'Example: /opt/mirage/mirage.py --ip --target 192.168.1.1 --type info --modules all --output /your/directory --debug'
     print 'Required Arguments:'
     print '--ip - the target being investigated is an IP address'
@@ -60,6 +60,7 @@ def Usage():
     print '--type - info, passive, active or all'
     print '--modules - all or specific'
     print 'Optional Arguments:'
+    print '--sleeptime - Choose the sleep period between targets when --targetlist is used.  Default is 7 seconds.  Value must be between 0 and 120.'
     print '--output - choose where you wish the output to be directed'
     print '--listmodules - prints a list of available modules and their descriptions.'
     print '--updatefeeds - update the feeds used for the info type switch.'
@@ -103,6 +104,13 @@ def ConfRead():
             CON.activeaddins.append(line[12:intLen])
         elif (line.find('passiveaddin') != -1):
             CON.passiveaddins.append(line[13:intLen])
+        elif (line.find('sleeptime') != -1):
+            if (CON.sleeptime == ''):                
+                CON.sleeptime = line[10:intLen]
+                if ((int(CON.sleeptime.strip()) < 0) or (int(CON.sleeptime.strip()) > 120)):
+                    CON.sleeptime = '7'
+                    print '[x] sleeptime value out of range.  sleeptime must be between 0 and 120 seconds'
+                    print '[-] sleeptime defaulting to 7 seconds.'
         else:
             if (CON.debug == True): 
                 print ''
@@ -144,6 +152,10 @@ def Parse(args):
             if option == 'modules':
                 CON.modules = args[i+1]
                 print option + ': ' + CON.modules
+
+            if option == 'sleeptime':
+                CON.sleeptime = args[i+1]
+                print option + ': ' + str(CON.sleeptime)
    
             if option == 'domain':
                 CON.domain = True
@@ -184,39 +196,45 @@ def Parse(args):
         #These are required params so length needs to be checked after all 
         #are read through         
         if ((len(CON.target) < 3) and (len(CON.targetlist) < 3)):
-            print 'target or targetlist are required arguments'           
+            print '[x] target or targetlist are required arguments'           
             print ''
             return -1         
     
         if len(CON.modules) < 3:
-            print 'modules is a required argument'           
+            print '[x] modules is a required argument'           
             print ''
             return -1
 
         if len(CON.type) < 2:
-            print 'type is a required argument'           
+            print '[x] type is a required argument'           
             print ''
             return -1 
 
         if ((len(CON.target) > 0) and (len(CON.targetlist) > 0)):
-            print 'target argument cannot be used with targetlist'
+            print '[x] target argument cannot be used with targetlist'
             print ''
             return -1
 
         if ((CON.domain == True) and ((CON.ip == True) or (CON.url == True))):
-            print 'domain argument cannot be used with ip or url'
+            print '[x] domain argument cannot be used with ip or url'
             print ''
             return -1
 
         if ((CON.ip == True) and ((CON.domain == True) or (CON.url == True))):
-            print 'ip argument cannot be used with domain or url'
+            print '[x] ip argument cannot be used with domain or url'
             print ''
             return -1         
 
         if ((CON.url == True) and ((CON.domain == True) or (CON.ip == True))):
-            print 'url argument cannot be used with domain or ip'
+            print '[x] url argument cannot be used with domain or ip'
             print ''
             return -1
+
+        if (CON.sleeptime != ''):
+            if ((int(CON.sleeptime.strip()) < 0) or (int(CON.sleeptime.strip()) > 120)):
+                print '[x] sleeptime value out of range.  sleeptime must be between 0 and 120 seconds'
+                print ''
+                return -1
                                    
     return 0
 
@@ -329,7 +347,7 @@ def Execute():
             print '[x] Unable to create LOG object: ', e
             Terminate(-1)
 
-    if (CON.type == 'active'):
+    if ((CON.type == 'active') or (CON.type == 'all')):
         PMAP = portmap()
         CON.targetobject = PMAP.Map(CON.targetobject, CON.logging, CON.logdir, CON.debug)
 
@@ -415,13 +433,15 @@ if __name__ == '__main__':
                     REP = logger()
                     REP.ReportCreate(CON.reportdir, CON.targetlist) 
                     if ((CON.type == 'all') or ((CON.type=='info') and (CON.modules=='all'))):
-                        TB = Table(header_row=['Target', 'Alexa', 'Abuse.ch Ransomware Domains', 'Abuse.ch Ransomware URLs', 'Abuse.ch Ransomware IPs', 'VirusTotal',   						        'IBM XForce'],                        
-                            col_width=['10', '10', '10%', '10%', '10%', '10%', '10%'],
-                            col_align=['center', 'center', 'center', 'center', 'center', 'center', 'center'],
-                            col_styles=['font-size: large','font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large'])  
+                        TB = Table(header_row=['Target', 'WhoIs Country', 'Alexa', 'Abuse.ch Ransomware Domains', 'Abuse.ch Ransomware URLs', 'Abuse.ch Ransomware IPs', 'VirusTotal',   						        'IBM XForce'],                        
+                            col_width=['10', '10', '10%', '10%', '10%', '10%', '10%', '10%'],
+                            col_align=['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'],
+                            col_styles=['font-size: large', 'font-size: large','font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large'])  
                     elif ((CON.type=='info') and (CON.modules!='all')):
                         if (CON.modules == 'alexa'):
                             TB = Table(header_row=['Target', 'Alexa'])
+                        elif (CON.modules=='whois'):
+                            TB = Table(header_row=['Target', 'WhoIs Country'])
                         elif (CON.modules=='abuse_ch_ransomware_domains'):
                             TB = Table(header_row=['Target', 'Abuse.ch Ransomware Domains'])
                         elif (CON.modules=='abuse_ch_ransomware_urls'):
@@ -454,6 +474,8 @@ if __name__ == '__main__':
 
                     if ((CON.type == 'all') or ((CON.type=='info') and (CON.modules=='all'))):
 
+                        whois = TableCell(str(CON.targetobject.country), bgcolor='white') 
+
                         if (CON.targetobject.alexa == False):
                             alexa = TableCell(str(CON.targetobject.alexa), bgcolor='red') 
                         else:
@@ -484,8 +506,9 @@ if __name__ == '__main__':
                         else:
                             xforce = TableCell(str(CON.targetobject.xforce), bgcolor='red') 
 
-                        TB.rows.append([target_link, alexa, abuse_rsw_domains, abuse_rsw_urls, abuse_rsw_ips, VT, xforce])
+                        TB.rows.append([target_link, whois, alexa, abuse_rsw_domains, abuse_rsw_urls, abuse_rsw_ips, VT, xforce])
                     elif ((CON.type == 'info') and (CON.modules!='all')):
+
                         if (CON.modules == 'alexa'):
                             if (CON.targetobject.alexa == False):
                                 alexa = TableCell(str(CON.targetobject.alexa), bgcolor='red')
@@ -536,9 +559,9 @@ if __name__ == '__main__':
                 del CON.targetobject
                 if (CON.targetdealtwith == False):
                     if (Count != numberOfTargets):
-                        print '[*] Sleeping 7 seconds before next request...'
+                        print '[*] Sleeping ' + CON.sleeptime.strip() + ' seconds before next request...'
                         print '*' * 100
-                        time.sleep(7)
+                        time.sleep(int(CON.sleeptime.strip()))
                 else:
                     CON.targetdealtwith = False
 

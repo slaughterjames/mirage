@@ -1,19 +1,19 @@
 '''
-Mirage v0.4 - Copyright 2017 James Slaughter,
-This file is part of Mirage v0.4.
+Mirage v0.5 - Copyright 2017 James Slaughter,
+This file is part of Mirage v0.5.
 
-Mirage v0.4 is free software: you can redistribute it and/or modify
+Mirage v0.5 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Mirage v0.4 is distributed in the hope that it will be useful,
+Mirage v0.5 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mirage v0.4.  If not, see <http://www.gnu.org/licenses/>.
+along with Mirage v0.5.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 '''
@@ -82,7 +82,7 @@ class logger:
         data = '<strong>END OF FILE</strong><br/>'
         data += '--------------------------------------------------------------------------------'
         data += '---------------------------------------\n<br/>'
-        data += 'Processed by Mirage v0.4\n<br/>'
+        data += 'Processed by Mirage v0.5\n<br/>'
         data += '--------------------------------------------------------------------------------'
         data += '---------------------------------------\n<br/>'
         data += '\n</body>\n</html>\n'
