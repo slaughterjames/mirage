@@ -90,8 +90,11 @@ def POE(logdir, target, logging, debug):
         FI.WriteLogFile(output, response_dump)
         print colored('[*] VirusTotal reputation data had been written to file here: ', 'green') + colored(output, 'blue', attrs=['bold'])
         if (logging == True):
-            newlogentry = 'VirusTotal data has been generated to file here: <a href=\"' + output + '\"> VirusTotal Reputation Output </a>'
+            newlogentry = 'VirusTotal data has been generated to file here: <a href=\"' + output + '\"> VirusTotal Reputation Output </a>'           
             LOG.WriteLog(logdir, target.target, newlogentry)
+            if (malware_flag == 1):
+                newlogentry = '|-----------------> Target has been flagged for malware'
+                LOG.WriteLog(logdir, target.target, newlogentry)
     except:
         print colored('[x] Unable to write VirusTotal reputation data to file', 'red', attrs=['bold']) 
         if (logging == True):

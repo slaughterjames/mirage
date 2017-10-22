@@ -23,13 +23,16 @@ def POE(logdir, target, logging, debug):
     newlogentry = ''
     cert_data = ''
     cert_output_data = ''
-    output = ''
 
     FI = fileio()
 
+    if not target.https_data:
+        print colored('[-] No ports were found hosting an HTTPs application.', 'red', attrs=['bold'])
+        return -1 
+
     for port in target.https_data:
 
-        output = logdir + 'index_port' + str(port) + '.html'
+        output = logdir + 'Cert_port_' + str(port) + '.txt'
     
         print '[*] Running cert against: ' + target.target
 
@@ -44,12 +47,12 @@ def POE(logdir, target, logging, debug):
             print colored('[*] Cert data had been written to file here: ', 'green') + colored(output, 'blue', attrs=['bold'])
             if (logging == True):
                 newlogentry = 'Cert file has been generated to file here: <a href=\"' + output + '\"> Cert Output </a>'
-                LOG.WriteLog(logdir, target.filename, newlogentry)
+                LOG.WriteLog(logdir, target.target, newlogentry)
         except:
             print colored('[x] Unable to write cert data to file', 'red', attrs=['bold'])  
             if (logging == True):
                 newlogentry = 'Unable to cert strings data to file'
-                LOG.WriteLog(logdir, target.filename, newlogentry)
+                LOG.WriteLog(logdir, target.target, newlogentry)
             return -1
 
     return 0

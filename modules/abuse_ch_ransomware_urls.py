@@ -23,6 +23,7 @@ def POE(logdir, target, logging, debug):
     newlogentry = ''
     alx_output_data = ''
     output = logdir + 'Abuse_ch_ransomware_URLs.txt'
+    malware_flag = 0
 
     FI = fileio()
 
@@ -32,6 +33,7 @@ def POE(logdir, target, logging, debug):
     for alx_data in subproc.stdout.readlines():
         if (alx_data != ''):
             target.abuse_ch_ransomware_urls = True
+            malware_flag = 1
             print colored('[-] Target appears in the abuse.ch ransomware URL feed', 'red', attrs=['bold'])
         if (debug == True):
             print '[DEBUG]: ' + alx_data 
@@ -44,6 +46,10 @@ def POE(logdir, target, logging, debug):
             if (logging == True):
                 newlogentry = 'abuse.ch ransomware URL data has been generated to file here: <a href=\"' + output + '\"> abuse.ch ransomware Output </a>'
                 LOG.WriteLog(logdir, target.target, newlogentry)
+                if (malware_flag == 1):
+                    newlogentry = '|-----------------> Target appears in the abuse.ch feed'
+                    LOG.WriteLog(logdir, target.target, newlogentry)
+
         except:
             print colored('[x] Unable to write abuse.ch ransomware URL data to file', 'red', attrs=['bold']) 
             if (logging == True):

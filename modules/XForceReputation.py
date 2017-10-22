@@ -41,6 +41,7 @@ def POE(logdir, target, logging, debug):
 
 
     global json
+    malware_flag = 0
     output = logdir + 'XForceReputation.txt'
 
     FI = fileio()
@@ -66,9 +67,11 @@ def POE(logdir, target, logging, debug):
         if (debug == True):
             print '[DEBUG]: ' + curl_data 
         if (curl_data.find('{\"Malware\":true}')!= -1):
+            malware_flag = 1
             target.xforce = True
             print colored('[-] Target has been flagged for malware', 'red', attrs=['bold'])
         elif (curl_data.find('{\"Botnet Command and Control Server\":true}')!= -1):
+            malware_flag = 1
             target.xforce = True
             print colored('[-] Target has been flagged as a Botnet C2 server', 'red', attrs=['bold'])
         curl_output_data += curl_data 
@@ -82,6 +85,9 @@ def POE(logdir, target, logging, debug):
         if (logging == True):
             newlogentry = 'X-Force reputation data has been generated to file here: <a href=\"' + output + '\"> XForce Reputation Output </a>'
             LOG.WriteLog(logdir, target.target, newlogentry)
+            if (malware_flag == 1):
+                newlogentry = '|-----------------> Target has been flagged for malware'
+                LOG.WriteLog(logdir, target.target, newlogentry)            
     except:
         print colored('[x] Unable to write X-Force reputation data to file', 'red', attrs=['bold'])
         if (logging == True):
