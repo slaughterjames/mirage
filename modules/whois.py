@@ -40,7 +40,7 @@ def POE(logdir, target, logging, debug):
 
     try:        
         FI.WriteLogFile(output, whois_output_data)
-        print colored('[*] Country Code: ', 'green') + colored(target.country, 'blue', attrs=['bold'])
+        print colored('[*] Country Code: ', 'green', attrs=['bold']) + colored(target.country, 'blue', attrs=['bold'])
         print colored('[*] WhoIs data had been written to file here: ', 'green') + colored(output, 'blue', attrs=['bold'])
         if (logging == True):
             newlogentry = 'WhoIs file has been generated to file here: <a href=\"' + output + '\"> WhoIs Output </a>'

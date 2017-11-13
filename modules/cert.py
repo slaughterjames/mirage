@@ -36,7 +36,7 @@ def POE(logdir, target, logging, debug):
     
         print '[*] Running cert against: ' + target.target
 
-        subproc = subprocess.Popen('openssl s_client -showcerts -connect ' + target.target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        subproc = subprocess.Popen('timeout 60s openssl s_client -showcerts -connect ' + target.target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         for cert_data in subproc.stdout.readlines():
             cert_output_data += cert_data
             if  (debug == True):

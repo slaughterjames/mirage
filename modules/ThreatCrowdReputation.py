@@ -1,8 +1,8 @@
 #python imports
 import sys
 import os
-import urllib
-import urllib2
+import json
+import simplejson
 import requests
 from termcolor import colored
 
@@ -26,7 +26,6 @@ def POE(logdir, target, logging, debug):
     newlogentry = ''
     data = ''
     tc = ''
-    global json
     output = logdir + 'ThreatCrowdReputation.txt'
 
     FI = fileio()
@@ -39,21 +38,25 @@ def POE(logdir, target, logging, debug):
         if (logging == True):
             newlogentry = 'ThreatCrowd does not support URL query at this time. <strong>' + target.target + '</strong>'
             LOG.WriteLog(logdir, target.target, newlogentry)
-        return 1
+        return -1
     elif (target.domain == True):
-        tc = 'https://www.threatcrowd.org/searchApi/v1/api.php?type=domain&query=' + target.target
-	data = requests.get(tc).text
+        tc = 'https://www.threatcrowd.org/searchApi/v2/domain/report/'
+        data = requests.get(tc, {"domain":target.target}).text
         if (debug == True):
            print '[DEBUG]: ' + data
     else:
-        tc = 'https://www.threatcrowd.org/searchApi/v1/api.php?type=ip&query=' + target.target
+        tc = 'http://www.threatcrowd.org/searchApi/v2/ip/report/'
         headers = {'ip': target.target}
-	data = requests.get(tc).text
+        data = requests.get(tc, {"ip":target.target}).text
         if (debug == True):
            print '[DEBUG]: ' + data
+
+    JSON = json.loads(data)
+    if (debug == True):
+        print '[DEBUG]: ' + json.dumps(JSON, indent=4, sort_keys=True)     
    
     try:        
-        FI.WriteLogFile(output, data)
+        FI.WriteLogFile(output, json.dumps(JSON, indent=4, sort_keys=True))
         print colored('[*] ThreatCrowd reputation data had been written to file here: ', 'green') + colored(output, 'blue', attrs=['bold'])
         if (logging == True):
             newlogentry = 'ThreatCrowd reputation data has been generated to file here: <a href=\"' + output + '\"> ThreatCrowd Reputation Output </a>'
