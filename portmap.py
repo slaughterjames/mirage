@@ -68,20 +68,29 @@ class portmap:
                 intFromVal1 = nmap_data.find('/')
                 if ((intFromVal1 != -1) and (intFromVal1 <7)):
                     tmpport = nmap_data[0:intFromVal1]
-                    target.https_data.append(int(tmpport))
-                    target.http_data.append(int(tmpport))
+                    try:
+                        target.https_data.append(int(tmpport))
+                        target.http_data.append(int(tmpport))
+                    except:
+                        print '[x] Unable to add port to array: ' + str(tmpport)          
             elif (nmap_data.find('ssl/http') != -1):
                 intFromVal1 = nmap_data.find('/')
                 if ((intFromVal1 != -1) and (intFromVal1 <7)):
                     tmpport = nmap_data[0:intFromVal1]
-                    target.https_data.append(int(tmpport))
-                    target.http_data.append(int(tmpport))
+                    try:
+                        target.https_data.append(int(tmpport))
+                        target.http_data.append(int(tmpport))
+                    except:
+                        print '[x] Unable to add port to array: ' + str(tmpport)
             else:
                 if (nmap_data.find('http') != -1):
                     intFromVal1 = nmap_data.find('/')
                     if ((intFromVal1 != -1) and (intFromVal1 <7)):
                         tmpport = nmap_data[0:intFromVal1]
-                        target.http_data.append(int(tmpport))
+                        try:
+                            target.http_data.append(int(tmpport))
+                        except:
+                            print '[x] Unable to add port to array: ' + str(tmpport)  
 
         if  (debug == True):
             print nmap_data    

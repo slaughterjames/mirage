@@ -433,15 +433,17 @@ if __name__ == '__main__':
                     REP = logger()
                     REP.ReportCreate(CON.reportdir, CON.targetlist) 
                     if ((CON.type == 'all') or ((CON.type=='info') and (CON.modules=='all'))):
-                        TB = Table(header_row=['Target', 'WhoIs Country', 'Alexa', 'Abuse.ch Ransomware Domains', 'Abuse.ch Ransomware URLs', 'Abuse.ch Ransomware IPs', 'VirusTotal',   						        'IBM XForce'],                        
-                            col_width=['10', '10', '10%', '10%', '10%', '10%', '10%', '10%'],
-                            col_align=['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'],
-                            col_styles=['font-size: large', 'font-size: large','font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large'])  
+                        TB = Table(header_row=['Target', 'WhoIs Country', 'Alexa', 'BlueCoat Categorization', 'Abuse.ch Ransomware Domains', 'Abuse.ch Ransomware URLs', 'Abuse.ch Ransomware IPs', 'VirusTotal', 'IBM XForce'],                        
+                            col_width=['10', '10', '10%', '10%', '10%', '10%', '10%', '10%', '10%'],
+                            col_align=['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'],
+                            col_styles=['font-size: large', 'font-size: large','font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large'])  
                     elif ((CON.type=='info') and (CON.modules!='all')):
                         if (CON.modules == 'alexa'):
                             TB = Table(header_row=['Target', 'Alexa'])
                         elif (CON.modules=='whois'):
                             TB = Table(header_row=['Target', 'WhoIs Country'])
+                        elif (CON.modules=='BCReputation'):
+                            TB = Table(header_row=['Target', 'BlueCoat Categorization'])
                         elif (CON.modules=='abuse_ch_ransomware_domains'):
                             TB = Table(header_row=['Target', 'Abuse.ch Ransomware Domains'])
                         elif (CON.modules=='abuse_ch_ransomware_urls'):
@@ -450,7 +452,7 @@ if __name__ == '__main__':
                             TB = Table(header_row=['Target', 'Abuse.ch Ransomware IPs'])
                         elif (CON.modules=='VTReputation'):
                             TB = Table(header_row=['Target', 'VirusTotal'])
-                        else:
+                        elif (CON.modules=='XForceReputation'):
                             TB = Table(header_row=['Target', 'IBM XForce'])
                     else:
                         TB = Table(header_row=['Target'])            
@@ -481,6 +483,11 @@ if __name__ == '__main__':
                         else:
                             alexa = TableCell(str(CON.targetobject.alexa), bgcolor='green')
 
+                        if (CON.targetobject.bluecoat == True):
+                            bluecoat = TableCell(str(CON.targetobject.bluecoatcategory), bgcolor='red')
+                        else:
+                            bluecoat = TableCell(str(CON.targetobject.bluecoatcategory), bgcolor='green')
+
                         if (CON.targetobject.abuse_ch_ransomware_domains == False):     
                             abuse_rsw_domains = TableCell(str(CON.targetobject.abuse_ch_ransomware_domains), bgcolor='green')
                         else:
@@ -506,7 +513,7 @@ if __name__ == '__main__':
                         else:
                             xforce = TableCell(str(CON.targetobject.xforce), bgcolor='red') 
 
-                        TB.rows.append([target_link, whois, alexa, abuse_rsw_domains, abuse_rsw_urls, abuse_rsw_ips, VT, xforce])
+                        TB.rows.append([target_link, whois, alexa, bluecoat, abuse_rsw_domains, abuse_rsw_urls, abuse_rsw_ips, VT, xforce])
                     elif ((CON.type == 'info') and (CON.modules!='all')):
 
                         if (CON.modules == 'alexa'):
@@ -551,6 +558,16 @@ if __name__ == '__main__':
                                 xforce = TableCell(str(CON.targetobject.xforce), bgcolor='red')
 
                             TB.rows.append([target_link, xforce]) 
+                        elif (CON.modules=='whois'):
+                            whois = TableCell(str(CON.targetobject.country), bgcolor='white')
+
+                            TB.rows.append([target_link, whois])
+                        elif (CON.modules=='BGReputation'):
+                            if (CON.targetobject.bluecoat == True):
+                                bluecoat = TableCell(str(CON.targetobject.bluecoatcategory), bgcolor='red')
+                            else:
+                                bluecoat = TableCell(str(CON.targetobject.bluecoatcategory), bgcolor='green') 
+                            TB.rows.append([target_link, bluecoat])
                         else:                           
                             TB.rows.append([target_link])
                     else:

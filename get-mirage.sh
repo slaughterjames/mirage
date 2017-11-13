@@ -109,6 +109,8 @@ install_pip_packages() {
   pip_packages="termcolor
   simplejson
   requests
+  bs4
+  BeautifulSoup
   "
 
   if [ "$@" = "dev" ]; then

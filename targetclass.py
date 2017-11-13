@@ -52,6 +52,8 @@ class targetclass:
         self.abuse_ch_feodo = False
         self.xforce = False
         self.VT = False
+        self.bluecoat = False
+        self.bluecoatcategory = ''
         self.country = 'N/A'
         self.http_data = array('i')
         self.https_data = array('i')
