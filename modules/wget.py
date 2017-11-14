@@ -28,7 +28,7 @@ def POE(logdir, target, logging, debug):
     wget_output_data = '' 
 
     if not target.http_data:
-        print colored('[-] No ports were found hosting an HTTP application.', 'red', attrs=['bold'])
+        print colored('\r\n[-] WGet - No ports were found hosting an HTTP application.', 'red', attrs=['bold'])
         return -1 
 
     for port in target.http_data:
@@ -36,6 +36,8 @@ def POE(logdir, target, logging, debug):
             print '[DEBUG] Port: ' + str(port) + '\n'
 
         output = logdir + 'WGet_port_' + str(port) + '.txt'
+
+        print '\r\n[*] Running WGet against: ' + target.target
 
         if (target.useragent.strip() == 'default'):
             if (debug == True):

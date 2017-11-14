@@ -26,7 +26,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running Dig against: ' + target.target
+    print '\r\n[*] Running Dig against: ' + target.target
 
     subproc = subprocess.Popen('dig -t NS ' + target.target, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for dig_data in subproc.stdout.readlines():

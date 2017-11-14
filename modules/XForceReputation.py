@@ -35,13 +35,13 @@ def POE(logdir, target, logging, debug):
     xf = ''
 
     if (APIKey == ''):
-        print colored('[x] An IBM X-Force Exchange API Key has not been input.  Create an account and generate an API Key to use this module', 'red', attrs=['bold'])
+        print colored('\r\n[x] An IBM X-Force Exchange API Key has not been input.  Create an account and generate an API Key and then apply /opt/mirage/modules/XForceReputation.py', 'red', attrs=['bold'])
         newlogentry = 'Unable to execute XForce reputation module - API Key/Password value not input.  Please add one to /opt/mirage/modules/XForceReputation.py'
         LOG.WriteLog(logdir, target.target, newlogentry)
         return -1
 
     if (APIPassword == ''):
-        print colored('[x] An IBM X-Force Exchange API Key Password has not been input.  Create an account and generate an API Key Password to use this module', 'red', attrs=['bold'])
+        print colored('\r\n[x] An IBM X-Force Exchange API Key Password has not been input.  Create an account and generate an API Key and then apply to /opt/mirage/modules/XForceReputation.py', 'red', attrs=['bold'])
         newlogentry = 'Unable to execute XForce reputation module - API Key/Password value not input.  Please add one to /opt/mirage/modules/XForceReputation.py'
         LOG.WriteLog(logdir, target.target, newlogentry)
         return -1
@@ -51,7 +51,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running X-Force reputation against: ' + target.target
+    print '\r\n[*] Running X-Force reputation against: ' + target.target
 
     if (target.url == True):
         xf = 'https://api.xforce.ibmcloud.com/url/' + target.target

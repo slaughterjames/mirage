@@ -28,13 +28,18 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
+    print '\r\n[*] Running WhoIs against: ' + target.target
+
     subproc = subprocess.Popen('whois ' + target.target, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for whois_data in subproc.stdout.readlines():
          whois_output_data += whois_data
-         if (country_count==0):
+         if (whois_data.find('connect: Network is unreachable')!= -1):
+             print colored('[x] WhoIs is unable to connect to the network [proxy blocked?] ', 'red', attrs=['bold'])  
+         elif (country_count==0):
              if (whois_data.find('country')!= -1):
                  target.country = whois_data
                  country_count += 1
+             
          if  (debug == True):
              print whois_data    
 

@@ -26,7 +26,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running Traceroute against: ' + target.target
+    print '\r\n[*] Running Traceroute against: ' + target.target
 
     subproc = subprocess.Popen('traceroute ' + target.target, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for trt_data in subproc.stdout.readlines():

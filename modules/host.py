@@ -26,7 +26,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running Host against: ' + target.target
+    print '\r\n[*] Running Host against: ' + target.target
 
     subproc = subprocess.Popen('host -a ' + target.target, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 

@@ -33,7 +33,7 @@ def POE(logdir, target, logging, debug):
     vt = ''
 
     if (apikey == ''):
-        print colored('[x] Unable to execute VirusTotal reputation module - apikey value not input.  Please add one to /opt/mirage/modules/VTReputation.py', 'red', attrs=['bold']) 
+        print colored('\r\n[x] Unable to execute VirusTotal reputation module - apikey value not input.  Please add one to /opt/mirage/modules/VTReputation.py', 'red', attrs=['bold']) 
         if (logging == True):
             newlogentry = 'Unable to execute VirusTotal reputation module - apikey value not input.  Please add one to /opt/mirage/modules/VTReputation.py'
             LOG.WriteLog(logdir, target.target, newlogentry)
@@ -45,7 +45,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
     
-    print '[*] Running VT reputation against: ' + target.target
+    print '\r\n[*] Running VT reputation against: ' + target.target
 
     if (target.url == True):
         vt = "https://www.virustotal.com/vtapi/v2/url/report"
@@ -66,7 +66,6 @@ def POE(logdir, target, logging, debug):
            print response_dict
         response_dump = json.dumps(json.JSONDecoder().decode(response), sort_keys=True, indent = 4)
     else:
-        print 'target ip: ' + target.target
         vt = "http://www.virustotal.com/vtapi/v2/ip-address/report"
         parameters = {"ip": target.target, "apikey": apikey.rstrip('\n')}
         response = urllib.urlopen('%s?%s' % (vt, urllib.urlencode(parameters))).read()

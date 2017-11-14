@@ -30,7 +30,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running ThreatCrowd reputation against: ' + target.target
+    print '\r\n[*] Running ThreatCrowd reputation against: ' + target.target
 
     if (target.url == True):
         print '[-] ThreatCrowd does not support URL query at this time.'

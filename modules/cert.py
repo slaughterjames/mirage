@@ -27,14 +27,14 @@ def POE(logdir, target, logging, debug):
     FI = fileio()
 
     if not target.https_data:
-        print colored('[-] No ports were found hosting an HTTPs application.', 'red', attrs=['bold'])
+        print colored('\r\n[-] Cert - No ports were found hosting an HTTPs application.', 'red', attrs=['bold'])
         return -1 
 
     for port in target.https_data:
 
         output = logdir + 'Cert_port_' + str(port) + '.txt'
     
-        print '[*] Running cert against: ' + target.target
+        print '\r\n[*] Running cert against: ' + target.target
 
         subproc = subprocess.Popen('timeout 60s openssl s_client -showcerts -connect ' + target.target + ':' + str(port), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         for cert_data in subproc.stdout.readlines():

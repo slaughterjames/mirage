@@ -38,7 +38,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running BlueCoat reputation against: ' + target.target
+    print '\r\n[*] Running BlueCoat reputation against: ' + target.target
 
     payload = {"url": target.target}
 

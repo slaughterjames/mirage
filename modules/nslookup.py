@@ -26,7 +26,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running NSLookup against: ' + target.target
+    print '\r\n[*] Running NSLookup against: ' + target.target
 
     subproc = subprocess.Popen('nslookup -type=any ' + target.target, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for nsl_data in subproc.stdout.readlines():

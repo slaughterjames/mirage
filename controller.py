@@ -46,6 +46,7 @@ class controller:
         self.domain = False
         self.target = ''
         self.targetlist = ''
+        self.targetlistsize = 0
         self.listoftargets = []
         self.singletarget = False
         self.targetobject = ''
@@ -78,9 +79,9 @@ class controller:
       
         #Locate the dynamic module, create a file object for it
         try:
-            fp, pathname, description = imp.find_module(modules, [self.modulesdir.strip()])
-            print '\n[*] Module ' + modules + ' located'
+            fp, pathname, description = imp.find_module(modules, [self.modulesdir.strip()])            
             if (self.debug == True):
+                print '\n[DEBUG] Module ' + modules + ' located'
                 print '\n[DEBUG] fp: ' + str(fp) + ' pathname: ' + str(pathname) + ' description: ' + str(description) + '\n'   
         except ImportError:
             print '[x] Unable to locate module: ' + modules
@@ -88,7 +89,8 @@ class controller:
         #Load the module into memory
     	try:
             mymod = imp.load_module(modules, fp, pathname, description)
-            print '[*] Module ' + modules + ' loaded successfully'
+            if (self.debug == True):
+                print '[DEBUG] Module ' + modules + ' loaded successfully'
         except Exception, e:
             print '[x] Unable to load module: ', e      
         finally:
@@ -96,7 +98,8 @@ class controller:
 
         #Execute the module
         try:
-            print '[*] Executing module\n'
+            if (self.debug == True):
+                print '[DEBUG] Executing module\n'
             if (self.type == 'info'):
                 mymod.POE(self.logdir, self.targetobject, self.logging, self.debug)
             elif (self.type == 'active'):

@@ -308,8 +308,11 @@ def TargetRead():
         CON.listoftargets.append(line)
         if (CON.debug == True):
             print '[DEBUG]: ' + line 
+
+    CON.targetlistsize = len(CON.listoftargets)
         
     print '[*] Finished reading target file.'
+    print '[*] Target file size: ' + str(CON.targetlistsize) + ' entries.'
     print ''
             
     return 0
@@ -463,7 +466,9 @@ if __name__ == '__main__':
                 Count += 1
 
                 CON.targetobject = targetclass(CON.url, CON.ip, CON.domain, CON.target, CON.useragent)
-                CON.targetobject.target = target.strip()                     
+                CON.targetobject.target = target.strip()
+
+                print '[*] Executing against target ' + str(Count) + ' of ' + str(CON.targetlistsize) + ' - ' + CON.targetobject.target + '\r'
  
                 Execute()                
 

@@ -27,7 +27,7 @@ def POE(logdir, target, logging, debug):
 
     FI = fileio()
 
-    print '[*] Running abuse.ch ransomware domain grep against: ' + target.target
+    print '\r\n[*] Running abuse.ch ransomware domain grep against: ' + target.target
 
     subproc = subprocess.Popen('grep ' + target.target + ' /opt/mirage/feeds/RW_DOMBL.txt', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for alx_data in subproc.stdout.readlines():

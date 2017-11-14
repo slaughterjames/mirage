@@ -29,7 +29,7 @@ def POE(logdir, target, logging, debug):
     vt = ''
 
     if (apikey == ''):
-        print colored('[x] Unable to execute Shodan module - apikey value not input.  Please add one to /opt/mirage/modules/Shodan.py', 'red', attrs=['bold']) 
+        print colored('\r\n[x] Unable to execute Shodan module - apikey value not input.  Please add one to /opt/mirage/modules/Shodan.py', 'red', attrs=['bold']) 
         if (logging == True):
             newlogentry = 'Unable to execute Shodan module - apikey value not input.  Please add one to /opt/mirage/modules/Shodan.py'
             LOG.WriteLog(logdir, target.target, newlogentry)
@@ -42,13 +42,13 @@ def POE(logdir, target, logging, debug):
     FI = fileio()       
     
     if (target.ip == False):
-        print colored('[x] Unable to execute Shodan module - target must be an IP - skipping.', 'red', attrs=['bold']) 
+        print colored('\r\n[x] Unable to execute Shodan module - target must be an IP - skipping.', 'red', attrs=['bold']) 
         if (logging == True):
             newlogentry = 'Unable to execute Shodan module - target must be an IP - skipping.'
             LOG.WriteLog(logdir, target.target, newlogentry)
         return -1
 
-    print '[*] Running Shodan against: ' + target.target
+    print '\r\n[*] Running Shodan against: ' + target.target
 
     # Lookup the host
     host = api.host(target.target)
