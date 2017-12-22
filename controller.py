@@ -1,19 +1,19 @@
 '''
-Mirage v0.5 - Copyright 2017 James Slaughter,
-This file is part of Mirage v0.5.
+Mirage v0.6 - Copyright 2017 James Slaughter,
+This file is part of Mirage v0.6.
 
-Mirage v0.5 is free software: you can redistribute it and/or modify
+Mirage v0.6 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Mirage v0.5 is distributed in the hope that it will be useful,
+Mirage v0.6 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mirage v0.5.  If not, see <http://www.gnu.org/licenses/>.
+along with Mirage v0.6.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 '''
@@ -58,6 +58,7 @@ class controller:
         self.useragent = ''
         self.apikey = ''
         self.output = ''
+        self.csv = False
         self.logroot = ''
         self.logdir = ''
         self.reportdir = ''

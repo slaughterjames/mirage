@@ -1,18 +1,18 @@
-Mirage v0.5 - Copyright 2017 James Slaughter,
-This file is part of Mirage v0.5.
+Mirage v0.6 - Copyright 2017 James Slaughter,
+This file is part of Mirage v0.6.
 
-Mirage v0.5 is free software: you can redistribute it and/or modify
+Mirage v0.6 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Mirage v0.5 is distributed in the hope that it will be useful,
+Mirage v0.6 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mirage v0.5.  If not, see <http://www.gnu.org/licenses/>.
+along with Mirage v0.6.  If not, see <http://www.gnu.org/licenses/>.
 
 Usage: [required] [--ip|--domain|--url] [--target|--targetlist] --type --modules [optional] --sleeptime --url --output --listmodules -updatefeeds --debug --help
 Example: /opt/mirage/mirage.py --ip --target 192.168.1.1 --type info --modules all --output /your/directory --debug
@@ -69,6 +69,11 @@ Executes host -a against the target.
 Executes an NSLookup against the target.
 [*] traceroute
 Executes a traceroute against the target.
+
+CHANGELOG VERSION V0.6:
+- Added --csv flag to allow logging to CSV file
+- Made improvements to several modules so they only execute when the right data set is being sent to them to be more efficient
+
 
 CHANGELOG VERSION V0.5:
 - Added changes to some of the modules to increase visibility over malicious findings.

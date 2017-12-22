@@ -1,20 +1,20 @@
 #!/usr/bin/python
 '''
-Mirage v0.5 - Copyright 2017 James Slaughter,
-This file is part of Mirage v0.5.
+Mirage v0.6 - Copyright 2017 James Slaughter,
+This file is part of Mirage v0.6.
 
-Mirage v0.5 is free software: you can redistribute it and/or modify
+Mirage v0.6 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Mirage v0.5 is distributed in the hope that it will be useful,
+Mirage v0.6 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mirage v0.5.  If not, see <http://www.gnu.org/licenses/>.
+along with Mirage v0.6.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 '''
@@ -46,25 +46,26 @@ Usage()
 Function: Display the usage parameters when called
 '''
 def Usage():
-    print 'Usage: [required] [--ip|--domain|--url] [--target|--targetlist] --type --modules [optional] --sleeptime --url --output --listmodules -updatefeeds --debug --help'
+    print 'Usage: [required] [--ip|--domain|--url] [--target|--targetlist] --type --modules [optional] --sleeptime --url --output --csv --listmodules -updatefeeds --debug --help'
     print 'Example: /opt/mirage/mirage.py --ip --target 192.168.1.1 --type info --modules all --output /your/directory --debug'
     print 'Required Arguments:'
-    print '--ip - the target being investigated is an IP address'
+    print '--ip - The target being investigated is an IP address'
     print 'OR'
-    print '--domain - the target being investigated is a domain'
+    print '--domain - The target being investigated is a domain'
     print 'OR'
-    print '--url - the target being investigated is a full URL'
-    print '--target - single target host to examine'
+    print '--url - The target being investigated is a full URL'
+    print '--target - Single target host to examine'
     print 'OR'
-    print '--targetlist - list of hosts to examine in one session'
+    print '--targetlist - List of hosts to examine in one session'
     print '--type - info, passive, active or all'
     print '--modules - all or specific'
     print 'Optional Arguments:'
     print '--sleeptime - Choose the sleep period between targets when --targetlist is used.  Default is 7 seconds.  Value must be between 0 and 120.'
-    print '--output - choose where you wish the output to be directed'
-    print '--listmodules - prints a list of available modules and their descriptions.'
-    print '--updatefeeds - update the feeds used for the info type switch.'
-    print '--debug - prints verbose logging to the screen to troubleshoot issues with a recon installation.'
+    print '--output - Choose where you wish the output to be directed'
+    print '--csv - Output to csv if logging is enabled'
+    print '--listmodules - Prints a list of available modules and their descriptions.'
+    print '--updatefeeds - Update the feeds used for the info type switch.'
+    print '--debug - Prints verbose logging to the screen to troubleshoot issues with a recon installation.'
     print '--help - You\'re looking at it!'
     sys.exit(-1)
 
@@ -177,6 +178,10 @@ def Parse(args):
                     print '[x] output must be a viable location'           
                     print ''
                     return -1
+
+            if option == 'csv':
+                CON.csv = True
+                print option + ': ' + str(CON.csv)
                 
             if option == 'debug':
                 CON.debug = True
@@ -192,6 +197,7 @@ def Parse(args):
         CON.updatefeeds = True
         print option + ': ' + str(CON.updatefeeds)
         print ''
+
     else:                                        
         #These are required params so length needs to be checked after all 
         #are read through         
@@ -411,17 +417,20 @@ if __name__ == '__main__':
         else:
             print '[-] Logger not active'
 
+        #Logging must be enabled in order to output to CSV
+        if (CON.csv == True):
+            if (CON.logging == False):
+                print '[x] Logging must be enabled in order to output to CSV.  Disregarding...'
+                CON.csv == False
+
         if (CON.singletarget == True):
             CON.targetobject = targetclass(CON.url, CON.ip, CON.domain, CON.target, CON.useragent)
             Execute()
             del CON.targetobject
         else:
             TargetRead()
-            numberOfTargets = 0
             Count = 0
-            for targets in CON.listoftargets:
-                numberOfTargets += 1           
-            
+                       
             if (CON.logging == True):
                 if len(CON.output) != 0:
                     CON.reportdir = CON.output.strip() + '/'
@@ -435,28 +444,49 @@ if __name__ == '__main__':
                     print '[*] Creating report file: ' + CON.reportdir + 'logroot.html'
                     REP = logger()
                     REP.ReportCreate(CON.reportdir, CON.targetlist) 
+                    if (CON.csv == True):
+                        csv_filename = CON.reportdir + 'logroot.csv'
+                        CSV = fileio()                        
                     if ((CON.type == 'all') or ((CON.type=='info') and (CON.modules=='all'))):
                         TB = Table(header_row=['Target', 'WhoIs Country', 'Alexa', 'BlueCoat Categorization', 'Abuse.ch Ransomware Domains', 'Abuse.ch Ransomware URLs', 'Abuse.ch Ransomware IPs', 'VirusTotal', 'IBM XForce'],                        
                             col_width=['10', '10', '10%', '10%', '10%', '10%', '10%', '10%', '10%'],
                             col_align=['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'],
                             col_styles=['font-size: large', 'font-size: large','font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large', 'font-size: large'])  
+                        if (CON.csv == True):
+                            CSV.WriteLogFile(csv_filename, 'Target,WhoIs Country,Alexa,BlueCoat Categorization,Abuse.ch Ransomware Domains,Abuse.ch Ransomware URLs,Abuse.ch Ransomware IPs,VirusTotal,IBM XForce\n')
                     elif ((CON.type=='info') and (CON.modules!='all')):
                         if (CON.modules == 'alexa'):
                             TB = Table(header_row=['Target', 'Alexa'])
+                            if (CON.csv == True):
+                                CSV.WriteLogFile(csv_filename, 'Target, Alexa\n')
                         elif (CON.modules=='whois'):
                             TB = Table(header_row=['Target', 'WhoIs Country'])
+                            if (CON.csv == True): 
+                                CSV.WriteLogFile(csv_filename, 'Target, WhoIs Country\n')
                         elif (CON.modules=='BCReputation'):
                             TB = Table(header_row=['Target', 'BlueCoat Categorization'])
+                            if (CON.csv == True):
+                                CSV.WriteLogFile(csv_filename, 'Target, BlueCoat Categorization\n')
                         elif (CON.modules=='abuse_ch_ransomware_domains'):
                             TB = Table(header_row=['Target', 'Abuse.ch Ransomware Domains'])
+                            if (CON.csv == True):  
+                                CSV.WriteLogFile(csv_filename, 'Target, Abuse.ch Ransomware Domains\n')
                         elif (CON.modules=='abuse_ch_ransomware_urls'):
-                            TB = Table(header_row=['Target', 'Abuse.ch Ransomware URLS'])                       
+                            TB = Table(header_row=['Target', 'Abuse.ch Ransomware URLS'])
+                            if (CON.csv == True):
+                                CSV.WriteLogFile(csv_filename, 'Target, Abuse.ch Ransomware URLS\n')                       
                         elif (CON.modules=='abuse_ch_ransomware_ips'):
                             TB = Table(header_row=['Target', 'Abuse.ch Ransomware IPs'])
+                            if (CON.csv == True):  
+                                CSV.WriteLogFile(csv_filename, 'Target, Abuse.ch Ransomware IPs\n')
                         elif (CON.modules=='VTReputation'):
                             TB = Table(header_row=['Target', 'VirusTotal'])
+                            if (CON.csv == True):
+                                CSV.WriteLogFile(csv_filename, 'Target, VirusTotal\n')
                         elif (CON.modules=='XForceReputation'):
                             TB = Table(header_row=['Target', 'IBM XForce'])
+                            if (CON.csv == True):   
+                                CSV.WriteLogFile(csv_filename, 'IBM XForce\n')
                     else:
                         TB = Table(header_row=['Target'])            
                 except Exception, e:
@@ -519,6 +549,9 @@ if __name__ == '__main__':
                             xforce = TableCell(str(CON.targetobject.xforce), bgcolor='red') 
 
                         TB.rows.append([target_link, whois, alexa, bluecoat, abuse_rsw_domains, abuse_rsw_urls, abuse_rsw_ips, VT, xforce])
+                        if (CON.csv == True):
+                            csv_logline = str(CON.targetobject.target.strip()) + ',' + str(CON.targetobject.country.strip()) + ',' + str(CON.targetobject.alexa) + ',' + str(CON.targetobject.bluecoatcategory) + ',' + str(CON.targetobject.abuse_ch_ransomware_domains) + ',' + str(CON.targetobject.abuse_ch_ransomware_urls) + ',' + str(CON.targetobject.abuse_ch_ransomware_ips) + ',' + str(CON.targetobject.VT) + ',' + str(CON.targetobject.xforce) + '\n'
+                            CSV.WriteLogFile(csv_filename, csv_logline)
                     elif ((CON.type == 'info') and (CON.modules!='all')):
 
                         if (CON.modules == 'alexa'):
@@ -528,6 +561,9 @@ if __name__ == '__main__':
                                 alexa = TableCell(str(CON.targetobject.alexa), bgcolor='green')
 
                             TB.rows.append([target_link, alexa])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.alexa)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='abuse_ch_ransomware_domains'):
                             if (CON.targetobject.abuse_ch_ransomware_domains == False):
                                 abuse_rsw_domains = TableCell(str(CON.targetobject.abuse_ch_ransomware_domains), bgcolor='green')
@@ -535,6 +571,9 @@ if __name__ == '__main__':
                                 abuse_rsw_domains = TableCell(str(CON.targetobject.abuse_ch_ransomware_domains), bgcolor='red')
 
                             TB.rows.append([target_link, abuse_rsw_domains])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.abuse_ch_ransomware_domains)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='abuse_ch_ransomware_urls'):
                             if (CON.targetobject.abuse_ch_ransomware_urls == False):
                                 abuse_rsw_urls = TableCell(str(CON.targetobject.abuse_ch_ransomware_urls), bgcolor='green')
@@ -542,6 +581,9 @@ if __name__ == '__main__':
                                 abuse_rsw_urls = TableCell(str(CON.targetobject.abuse_ch_ransomware_urls), bgcolor='red')
 
                             TB.rows.append([target_link, abuse_rsw_urls])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.abuse_ch_ransomware_urls)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='abuse_ch_ransomware_ips'):
                             if (CON.targetobject.abuse_ch_ransomware_ips == False):
                                 abuse_rsw_ips = TableCell(str(CON.targetobject.abuse_ch_ransomware_ips), bgcolor='green')
@@ -549,6 +591,9 @@ if __name__ == '__main__':
                                 abuse_rsw_ips = TableCell(str(CON.targetobject.abuse_ch_ransomware_ips), bgcolor='red') 
 
                             TB.rows.append([target_link, abuse_rsw_ips]) 
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.abuse_ch_ransomware_ips)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='VTReputation'):
                             if (CON.targetobject.VT == False):
                                 VT = TableCell(str(CON.targetobject.VT), bgcolor='green')
@@ -556,23 +601,35 @@ if __name__ == '__main__':
                                 VT = TableCell(str(CON.targetobject.VT), bgcolor='red') 
 
                             TB.rows.append([target_link, VT])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.VT)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='XForceReputation'):
                             if (CON.targetobject.xforce == False):
                                 xforce = TableCell(str(CON.targetobject.xforce), bgcolor='green')
                             else:
                                 xforce = TableCell(str(CON.targetobject.xforce), bgcolor='red')
 
-                            TB.rows.append([target_link, xforce]) 
+                            TB.rows.append([target_link, xforce])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.xforce)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='whois'):
                             whois = TableCell(str(CON.targetobject.country), bgcolor='white')
 
                             TB.rows.append([target_link, whois])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.country)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         elif (CON.modules=='BGReputation'):
                             if (CON.targetobject.bluecoat == True):
                                 bluecoat = TableCell(str(CON.targetobject.bluecoatcategory), bgcolor='red')
                             else:
                                 bluecoat = TableCell(str(CON.targetobject.bluecoatcategory), bgcolor='green') 
                             TB.rows.append([target_link, bluecoat])
+                            if (CON.csv == True):
+                                csv_logline = CON.targetobject.target + ',' + str(CON.targetobject.bluecoatcategory)
+                                CSV.WriteLogFile(csv_filename, csv_logline)
                         else:                           
                             TB.rows.append([target_link])
                     else:
@@ -580,7 +637,7 @@ if __name__ == '__main__':
 
                 del CON.targetobject
                 if (CON.targetdealtwith == False):
-                    if (Count != numberOfTargets):
+                    if (Count != CON.targetlistsize):
                         print '[*] Sleeping ' + CON.sleeptime.strip() + ' seconds before next request...'
                         print '*' * 100
                         time.sleep(int(CON.sleeptime.strip()))
