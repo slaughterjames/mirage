@@ -25,6 +25,13 @@ def POE(logdir, target, logging, debug):
     output = logdir + 'Abuse_ch_ransomware_URLs.txt'
     malware_flag = 0
 
+    if (target.ip == True):
+        print colored('\r\n[-] Unable to execute abuse.ch ransomware URL grep - target must be a domain or URL - skipping.', 'yellow', attrs=['bold']) 
+        if (logging == True):
+            newlogentry = 'Unable to execute abuse.ch ransomware URL grep - target must be a domain or URL - skipping.'
+            LOG.WriteLog(logdir, target.target, newlogentry)
+        return -1
+
     FI = fileio()
 
     print '\r\n[*] Running abuse.ch ransomware URL grep against: ' + target.target

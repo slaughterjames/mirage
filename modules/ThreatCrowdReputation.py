@@ -66,6 +66,16 @@ def POE(logdir, target, logging, debug):
         if (logging == True):
             newlogentry = 'Unable to write ThreatCrowd reputation data to file'
             LOG.WriteLog(logdir, target.target, newlogentry)
-        return -1
+
+    with open(output.strip(),"r") as fd:
+        file_contents = fd.read()
+        JSON_output    = file_contents.splitlines() 
+
+    if (debug == True):
+        print '[DEBUG]: ' + str(JSON_output) 
+    if (str(JSON_output).find('hashes')!= -1):
+        print colored('[-] Malware hashes have been found associated with this target...', 'red', attrs=['bold'])
+    elif (str(JSON_output).find('malwr.com')!= -1):
+        print colored('[-] A sample linked to this target has been submitted to malwr.com', 'red', attrs=['bold'])
 
     return 0

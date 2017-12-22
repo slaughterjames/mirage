@@ -68,7 +68,11 @@ def POE(logdir, target, logging, debug):
         print colored('[x] Unable to connect to IBM X-Force\'s reputation site', 'red', attrs=['bold']) 
 
     if (req.status_code != 200):
-        print "[-] HTTP {} returned".format(req.status_code) 
+        print "[-] HTTP {} returned".format(req.status_code)
+        if (req.status_code == 404):
+            print '[-] Target not found in dataset...'
+        elif (req.status_code == 403):
+            print colored('[x] 403 Forbidden - something is wrong with the connection or credentials...', 'red', attrs=['bold'])
         return -1                        
    
     try:        
@@ -85,6 +89,7 @@ def POE(logdir, target, logging, debug):
         return -1
 
     FI.ReadFile(output)
+    print '[DEBUG]: output: ' + output 
 
     for curl_data in FI.fileobject:
         if (debug == True):

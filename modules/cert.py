@@ -24,11 +24,11 @@ def POE(logdir, target, logging, debug):
     cert_data = ''
     cert_output_data = ''
 
-    FI = fileio()
-
     if not target.https_data:
         print colored('\r\n[-] Cert - No ports were found hosting an HTTPs application.', 'red', attrs=['bold'])
         return -1 
+
+    FI = fileio()
 
     for port in target.https_data:
 

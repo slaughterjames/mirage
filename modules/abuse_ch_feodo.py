@@ -25,6 +25,13 @@ def POE(logdir, target, logging, debug):
     output = logdir + 'Abuse_ch_feodo.txt'
     malware_flag = 0
 
+    if (target.ip == False):
+        print colored('\r\n[-] Unable to execute abuse.ch Feodo IP grep - target must be an IP - skipping.', 'yellow', attrs=['bold']) 
+        if (logging == True):
+            newlogentry = 'Unable to execute abuse.ch Feodo IP grep - target must be an IP - skipping.'
+            LOG.WriteLog(logdir, target.target, newlogentry)
+        return -1
+
     FI = fileio()
 
     print '\r\n[*] Running abuse.ch Feodo grep against: ' + target.target

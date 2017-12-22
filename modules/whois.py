@@ -36,7 +36,7 @@ def POE(logdir, target, logging, debug):
          if (whois_data.find('connect: Network is unreachable')!= -1):
              print colored('[x] WhoIs is unable to connect to the network [proxy blocked?] ', 'red', attrs=['bold'])  
          elif (country_count==0):
-             if (whois_data.find('country')!= -1):
+             if ((whois_data.find('country')!= -1) or (whois_data.find('Country')!= -1)):
                  target.country = whois_data
                  country_count += 1
              

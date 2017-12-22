@@ -13,7 +13,7 @@ from fileio import fileio
 
 '''
 ***BEGIN DESCRIPTION***
-Executes a grep against the top 1 million sites on Alexa.
+Executes a grep against the top 1 million Internet domains on Alexa.
 ***END DESCRIPTION***
 '''
 def POE(logdir, target, logging, debug):
@@ -23,6 +23,13 @@ def POE(logdir, target, logging, debug):
     newlogentry = ''
     alx_output_data = ''
     output = logdir + 'Alexa.txt'
+
+    if ((target.ip == True) or (target.url == True)):
+        print colored('\r\n[-] Unable to execute Alexa module - target must be a domain - skipping.', 'yellow', attrs=['bold']) 
+        if (logging == True):
+            newlogentry = 'Unable to execute Alexa module - target must be a domain - skipping.'
+            LOG.WriteLog(logdir, target.target, newlogentry)
+        return -1   
 
     FI = fileio()
 
