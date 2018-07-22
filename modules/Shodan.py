@@ -19,7 +19,7 @@ Retrieves the available data for targets against the Shodan dataset.
 def POE(logdir, target, logging, debug):
 
     #Add your Shodan API key inside the quotes on the line below <--------------------------
-    apikey = 'TPPXBeL9ZkqrYPjlJ3S5GvG2F8fhj695'
+    apikey = ''
 
     if (logging == True): 
         LOG = logger() 
