@@ -1,6 +1,6 @@
 #!/usr/bin/python
 '''
-Mirage v0.7 - Copyright 2017 James Slaughter,
+Mirage v0.7 - Copyright 2018 James Slaughter,
 This file is part of Mirage v0.7.
 
 Mirage v0.7 is free software: you can redistribute it and/or modify
