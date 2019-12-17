@@ -38,6 +38,7 @@ Optional Arguments:
 --help - You're looking at it!
 
 DEFAULT ADDIN TYPES
+
 [*] Addin types available are:
 
 [*] Type: active
@@ -46,6 +47,7 @@ DEFAULT ADDIN TYPES
 [*] --Or-- type all
 
 DEFAULT MODULE LIST
+
 [*] ThreatCrowdReputation: Type: Info - Description: Retrieves the reputation data for domains and IPs against the ThreatCrowd database.
 
 [*] XForceReputation: Type: Info - Description: Retrieves the reputation data for domains and IPs against the IBM X-Force Exchange database.
