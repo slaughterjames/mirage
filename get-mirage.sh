@@ -327,4 +327,6 @@ install_pip_packages $ITYPE
 configure_mirage
 install_mirage_package $ITYPE
 install_secondary_packages $ITYPE
+configure_jarm
+install_jarm_package
 complete_message
