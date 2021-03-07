@@ -31,6 +31,6 @@ This tool lends itself to both offensive(bug bounty reconnaisance) and defensive
 
 ## Documentation
 
-Use the [Installation Guide](https://github.com/slaughterjames/mirage/blob/master/doc/install.md) to get started.
+Use the [Installation Guide](https://github.com/slaughterjames/mirage/blob/master/docs/install.md) to get started.
 
-Go to the [User's Guide](https://github.com/slaughterjames/mirage/blob/master/doc/user_guide.md) for additional information.
+Go to the [User's Guide](https://github.com/slaughterjames/mirage/blob/master/docs/user_guide.md) for additional information.
