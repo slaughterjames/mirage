@@ -22,7 +22,7 @@
 #
 #------------------------------------------------------------------------------
 
-__ScriptVersion="updatefeeds-v0.9-3"
+__ScriptVersion="updatefeeds-v1.0-1"
 LOGFILE="/var/log/mirage_updatefeeds.log"
 DIR="/opt/mirage/"
 FEEDS_DIR="/opt/mirage/feeds/"
